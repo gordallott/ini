@@ -201,7 +201,6 @@ func (s *Section) mapTo(val reflect.Value) error {
 	for i := 0; i < typ.NumField(); i++ {
 		field := val.Field(i)
 		tpField := typ.Field(i)
-
 		tag := tpField.Tag.Get("ini")
 		if tag == "-" {
 			continue
@@ -220,9 +219,8 @@ func (s *Section) mapTo(val reflect.Value) error {
 			if err := s.mapTo(field); err != nil {
 				return err
 			}
-		}
-
-		if isStruct {
+			continue
+		} else if isStruct {
 			if sec, err := s.f.GetSection(fieldName); err == nil {
 				if err = sec.mapTo(field); err != nil {
 					return fmt.Errorf("error mapping field(%s): %v", fieldName, err)

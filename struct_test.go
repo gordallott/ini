@@ -93,7 +93,16 @@ type unsupport3 struct {
 }
 
 type unsupport4 struct {
-	*unsupport3 `ini:"Others"`
+	*unsupport3
+}
+
+type meta struct {
+	Cities string
+	Note   string
+}
+
+type composite struct {
+	*meta
 }
 
 type defaultValue struct {
@@ -121,6 +130,12 @@ Cities =
 func Test_Struct(t *testing.T) {
 	Convey("Map to struct", t, func() {
 		Convey("Map file to struct", func() {
+			cfg, _ := Load([]byte(_CONF_DATA_STRUCT))
+			others, _ := cfg.GetSection("Others")
+			tmpStruct := composite{}
+			others.MapTo(&tmpStruct)
+			So(tmpStruct.Note, ShouldEqual, "Hello world!")
+
 			ts := new(testStruct)
 			So(MapTo(ts, []byte(_CONF_DATA_STRUCT)), ShouldBeNil)
 
@@ -147,6 +162,7 @@ func Test_Struct(t *testing.T) {
 			So(fmt.Sprint(ts.Others.Coordinates), ShouldEqual, "[192.168 10.11]")
 			So(ts.Others.Note, ShouldEqual, "Hello world!")
 			So(ts.testEmbeded.GPA, ShouldEqual, 2.8)
+
 		})
 
 		Convey("Map section to struct", func() {
@@ -180,6 +196,9 @@ func Test_Struct(t *testing.T) {
 			}
 			So(cfg.MapTo(&unsupport{}), ShouldNotBeNil)
 			So(cfg.MapTo(&unsupport2{}), ShouldNotBeNil)
+			others, _ := cfg.GetSection("Others")
+			So(others.MapTo(&unsupport4{}), ShouldNotBeNil)
+
 		})
 
 		Convey("Map from invalid data source", func() {
