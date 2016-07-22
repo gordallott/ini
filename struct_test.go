@@ -61,6 +61,7 @@ Money = 1.25
 Born = 1993-10-07T20:17:05Z
 Duration = 2h45m
 Unsigned = 3
+GPA = 2.8
 
 [Others]
 Cities = HangZhou|Boston
@@ -71,9 +72,6 @@ Ages = 18,19
 Populations = 12345678,98765432
 Coordinates = 192.168,10.11
 Note = Hello world!
-
-[grade]
-GPA = 2.8
 
 [foo.bar]
 Here = there
@@ -182,7 +180,6 @@ func Test_Struct(t *testing.T) {
 			}
 			So(cfg.MapTo(&unsupport{}), ShouldNotBeNil)
 			So(cfg.MapTo(&unsupport2{}), ShouldNotBeNil)
-			So(cfg.MapTo(&unsupport4{}), ShouldNotBeNil)
 		})
 
 		Convey("Map from invalid data source", func() {
@@ -247,14 +244,12 @@ func Test_Struct(t *testing.T) {
 		var buf bytes.Buffer
 		_, err = cfg.WriteTo(&buf)
 		So(err, ShouldBeNil)
-		So(buf.String(), ShouldEqual, `NAME   = Unknwon
-Male   = true
-Age    = 21
-Height = 100
-GPA    = 2.8
-Date   = 1993-10-07T20:17:05Z
-
-[infos]
+		So(buf.String(), ShouldEqual, `NAME        = Unknwon
+Male        = true
+Age         = 21
+Height      = 100
+GPA         = 2.8
+Date        = 1993-10-07T20:17:05Z
 Dates       = 1993-10-07T20:17:05Z|1993-10-07T20:17:05Z
 Places      = HangZhou,Boston
 Years       = 1993,1994
